@@ -1,6 +1,5 @@
-use std::{cell, fmt};
-use std::io::{Write, stdout};
-use rand::{random, Rng};
+use std::{fmt};
+use rand::{Rng};
 use rand::prelude::SliceRandom;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -93,50 +92,14 @@ impl Maze {
     fn get_dim(&self) -> (usize, usize) {
         (self.width, self.height)
     }
-    fn get_cells_ref(&self) -> &Vec<Vec<Cell>> {
-        &self.cells
-    }
 
     fn remove_wall_between_cells(&mut self, cell : (usize, usize), ncell : (usize, usize)) {
-        //let (cx, cy) = cell;
-        //let (nx, ny) = ncell;
-        //println!("cell: {:?}", cell);
-        //println!("ncell: {:?}", ncell);
-        ////println!("cell: {cell} = ({cell.0}, {cell.1})");
-        //let (dx , dy ): (isize,isize) = ((nx - cx) as isize, (ny - cy) as isize);
-        //match (dx, dy) {
-        //    (dx, 0) => {
-        //        if dx < 0 {
-        //            let cell_to_remove = self.get_cell_ref((cx + dx) as usize, ny as usize);
-        //            cell_to_remove.mark_visited();
-        //        } else {
-        //            let cell_to_remove = self.get_cell_ref((dx + 1) as usize, ny as usize);
-        //            cell_to_remove.mark_visited();
-        //        }
-        //    },
-        //    (0, dy) =>
-        //        if dy < 0 {
-        //            let cell_to_remove = self.get_cell_ref(nx as usize, (dy - 1) as usize);
-        //            cell_to_remove.mark_visited();
-        //        } else {
-        //            let cell_to_remove = self.get_cell_ref(nx as usize, (dy + 1) as usize);
-        //            cell_to_remove.mark_visited();
-        //    }
-        //    _ => {
-        //        panic!("Something went wrong");
-        //    }
-        //}
         let (cx, cy) = cell;
         let (nx, ny) = ncell;
 
         // The wall is located between the current cell and the neighbor cell
         let wall_x = (cx + nx) / 2;
         let wall_y = (cy + ny) / 2;
-        //println!("cx: {cx}; cy:{cy}");
-        //println!("nx: {nx}; ny:{ny}");
-        //println!("rwall_x: {}, rwall_y: {}", rwall_x, rwall_y);
-        //println!("wall_x: {}, wall_y: {}", wall_x, wall_y);
-        // Remove the wall by converting it to a Tile
         self.get_cell_ref(wall_x, wall_y).mark_visited();
     }
 
@@ -162,7 +125,7 @@ impl Maze {
 
     // unused
     fn add_doors(&mut self) {
-        let (w, h) = (self.width-1, self.height-1);
+        let (_w, _h) = (self.width-1, self.height-1);
         // create openings
         //self.modify_cell(0, 1, Door); // row
         //self.modify_cell(h, w-1, Door); // cols
@@ -171,8 +134,8 @@ impl Maze {
     fn add_random_doors(&mut self) {
         let (w, h) = (self.width-1, self.height-1);
         let mut rng = rand::thread_rng();
-        let rr =rng.gen_range(1..w);
-        let rc =rng.gen_range(1..h);
+        let _rr =rng.gen_range(1..w);
+        let _rc =rng.gen_range(1..h);
         // create openings
         //self.modify_cell(0, rr, AlgorithmCell::Door); // row
         //self.modify_cell(rc, 0, AlgorithmCell::Door); // cols
@@ -187,7 +150,7 @@ trait CarvingStrategy {
 }
 
 struct DFSCarvingAlgorithm;
-impl CarvingStrategy for crate::DFSCarvingAlgorithm{
+impl CarvingStrategy for DFSCarvingAlgorithm{
     fn get_neighbors(&self, x: usize, y: usize, maze: &mut Maze) -> Vec<(usize,usize)>{
         let dir: Vec<(isize, isize)> = vec![(0,-2), (0,2), (2,0), (-2,0)];
         let (w,h) = maze.get_dim();
@@ -195,9 +158,9 @@ impl CarvingStrategy for crate::DFSCarvingAlgorithm{
         for (dx, dy) in dir {
             let x_new = (x as isize + dx) as usize;
             let y_new = (y as isize + dy) as usize;
-            if (0 <= x_new && x_new < w ) && (0 <= y_new && y_new < h ) {
+            if (x_new < w ) && (y_new < h ) {
                 //println!("{:?}, {:?}, {:?}", x, y, maze.get_dim());
-                neighbors.push((x_new as usize, y_new as usize))
+                neighbors.push((x_new, y_new))
             }
         }
         neighbors
@@ -246,11 +209,11 @@ impl CarvingStrategy for crate::DFSCarvingAlgorithm{
 }
 struct HomemadeCarvingAlgorithm;
 impl CarvingStrategy for HomemadeCarvingAlgorithm {
-    fn get_neighbors(&self,x: usize, y: usize, maze: &mut Maze) -> Vec<(usize, usize)> {
+    fn get_neighbors(&self,_x: usize, _y: usize, _maze: &mut Maze) -> Vec<(usize, usize)> {
         todo!()
     }
 
-    fn carve(self: &mut HomemadeCarvingAlgorithm, maze: &mut Maze) {
+    fn carve(self: &mut HomemadeCarvingAlgorithm, _maze: &mut Maze) {
         todo!()
     }
 }
